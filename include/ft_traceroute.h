@@ -11,5 +11,23 @@
 #include <unistd.h>
 
 #define ERR_CANNOT_CREATE_SOCKET "Error: Cannot create raw socket: %s\n"
+#define ERR_SOCKET_NOT_PERMITTED "ping: socket: Operation not permitted\n"
+
+extern volatile int running;
+
+/*
+    check_root.c
+*/
+void check_root_privileges();
+
+/*
+    icmp.c
+*/
+int receive_icmp_response(int sockfd, int ttl);
+
+/*
+    send_udp.c
+*/
+int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl);
 
 #endif

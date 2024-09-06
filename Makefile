@@ -8,7 +8,10 @@ HEADER_DIR				= include/
 HEADER_FILE				= ft_traceroute.h
 
 DIR						= src/
-SRC			 			= main.c 
+SRC			 			= main.c \
+							check_root.c \
+							icmp.c \
+							send_udp.c \
 
 OBJECTS			    	= $(SRC:%.c=$(BUILD_DIR)%.o)
 	
