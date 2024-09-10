@@ -45,7 +45,7 @@ int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl);
 /*
     resolve_hostname.c
 */
-void resolve_hostame_and_display(struct sockaddr_in *src_addr, long rtt);
+void resolve_hostame_and_display(struct sockaddr_in *src_addr, double rtt);
 
 /*
     parsing.c

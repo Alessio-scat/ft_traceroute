@@ -17,10 +17,10 @@
     +---------------------------+
 */
 
-long calculate_time_diff(struct timeval start, struct timeval end) {
+double calculate_time_diff(struct timeval start, struct timeval end) {
     long seconds = end.tv_sec - start.tv_sec;
     long microseconds = end.tv_usec - start.tv_usec;
-    return (seconds * 1000) + (microseconds / 1000);
+    return (seconds * 1000) + (microseconds / 1000.0);
 }
 
 int receive_icmp_response(int sockfd, int ttl) {
@@ -48,7 +48,7 @@ int receive_icmp_response(int sockfd, int ttl) {
     // Display Ip routeur 
     // printf("TTL: %d, Received response from %s\n", ttl, inet_ntoa(src_addr.sin_addr));
 
-    long rtt = calculate_time_diff(start, end);
+    double rtt = calculate_time_diff(start, end);
 
     // Extract IP Header
     #ifdef __linux__

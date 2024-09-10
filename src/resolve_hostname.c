@@ -5,7 +5,7 @@
         - You have to manage the FQDN without running the DNS resolution in the jump display
 */
 
-void resolve_hostame_and_display(struct sockaddr_in *src_addr, long rtt)
+void resolve_hostame_and_display(struct sockaddr_in *src_addr, double rtt)
 {
     // char hostname[NI_MAXHOST]; // NI_MAXHOST standarf POSIX, DNS protocole
     // int err = getnameinfo((struct sockaddr*)src_addr, sizeof(src_addr), hostname, sizeof(hostname), NULL, 0, NI_NAMEREQD);
@@ -17,5 +17,5 @@ void resolve_hostame_and_display(struct sockaddr_in *src_addr, long rtt)
     //     printf("%s (%s) ", hostname, inet_ntoa(src_addr->sin_addr));
     if (f_packet == 1)
         printf("%s (%s) ", inet_ntoa(src_addr->sin_addr), inet_ntoa(src_addr->sin_addr));
-    printf("%ld ms ", rtt); 
+    printf("%.3f ms ", rtt); 
 }
