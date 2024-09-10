@@ -10,11 +10,13 @@
 #include <errno.h>
 #include <unistd.h>
 #include <netinet/ip.h>
+#include <sys/time.h>
 
 #define ERR_CANNOT_CREATE_SOCKET "Error: Cannot create raw socket: %s\n"
 #define ERR_SOCKET_NOT_PERMITTED "ping: socket: Operation not permitted\n"
 
 extern volatile int running;
+extern volatile int f_packet;
 
 /*
     check_root.c

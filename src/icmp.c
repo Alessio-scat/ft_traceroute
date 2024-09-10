@@ -17,9 +17,16 @@
     +---------------------------+
 */
 
+long calculate_time_diff(struct timeval start, struct timeval end) {
+    long seconds = end.tv_sec - start.tv_sec;
+    long microseconds = end.tv_usec - start.tv_usec;
+    return (seconds * 1000) + (microseconds / 1000);
+}
+
 int receive_icmp_response(int sockfd, int ttl) {
 
-    struct timeval timeout;
+    (void)ttl;
+    struct timeval timeout, start, end;;
     timeout.tv_sec = 2;
     timeout.tv_usec = 0;
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
@@ -30,15 +37,18 @@ int receive_icmp_response(int sockfd, int ttl) {
     socklen_t addr_len = sizeof(src_addr);
 
     // Reception message ICMP
+    gettimeofday(&start, NULL);
     int n = recvfrom(sockfd, recv_buffer, sizeof(recv_buffer), 0, (struct sockaddr*)&src_addr, &addr_len);
+    gettimeofday(&end, NULL);
     if (n < 0) {
-        perror("recvfrom failed");
-        printf("* * * (TTL: %d)\n", ttl);  // display * if nothing response 
+        printf("* ");  // display * if nothing response 
         return -1;
     }
 
     // Display Ip routeur 
-    printf("TTL: %d, Received response from %s\n", ttl, inet_ntoa(src_addr.sin_addr));
+    // printf("TTL: %d, Received response from %s\n", ttl, inet_ntoa(src_addr.sin_addr));
+
+    long rtt = calculate_time_diff(start, end);
 
     // Extract IP Header
     #ifdef __linux__
@@ -50,17 +60,22 @@ int receive_icmp_response(int sockfd, int ttl) {
     #endif
 
     unsigned char icmp_type = recv_buffer[ip_header_len];
+    unsigned char icmp_code = recv_buffer[ip_header_len + 1];
+
+    if (f_packet == 1)
+        printf("%s ", inet_ntoa(src_addr.sin_addr));
+    printf("%ld ms ", rtt); 
 
     // unsigned char icmp_type = recv_buffer[20];
-    if (icmp_type == 11)// ICMP "Time Exceeded" continue the loop
+    if (icmp_type == 11 && icmp_code == 0)// ICMP "Time Exceeded" continue the loop
     {  
-        printf("ICMP Time Exceeded from %s\n", inet_ntoa(src_addr.sin_addr));
+        // printf("ICMP Time Exceeded from %s\n", inet_ntoa(src_addr.sin_addr));
         return 0; 
     } 
-    else if (icmp_type == 3) // ICMP "Port Unreachable"
+    else if (icmp_type == 3 && icmp_code == 3) // ICMP "Port Unreachable"
     {  
-        printf("Destination reached from %s\n", inet_ntoa(src_addr.sin_addr));
-        return 1;  // stop
+        // printf("Destination reached from %s\n", inet_ntoa(src_addr.sin_addr));
+        return 2;  // stop
     }
 
     return 0;

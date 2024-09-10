@@ -1,6 +1,7 @@
 #include "../include/ft_traceroute.h"
 
 volatile int running = 1;
+volatile int f_packet = 1;
 
 void handle_interrupt(int sig) {
     (void)sig;
@@ -41,18 +42,33 @@ int main ()
     inet_pton(AF_INET, "8.8.8.8", &dest_addr.sin_addr);
     
     int ttl = 1;
+    signal(SIGINT, handle_interrupt);
+    int stop = 0;
 
-    signal(SIGINT, handle_interrupt); 
-    while (running)
+    while (running && ttl <= 64)
     {
-        // Send UDP packet with ttl actual
-        if (send_udp_packet(udp_sockfd, &dest_addr, ttl) < 0)
-            break;
+        printf("%d  ", ttl);
 
-        // Receive response message ICMP
-        if (receive_icmp_response(icmp_sockfd, ttl) == 1)
-            break ;
+        f_packet = 1;
+        for (int i = 0; i < 3; i++){
+            // Send UDP packet with ttl actual
+            if (send_udp_packet(udp_sockfd, &dest_addr, ttl) < 0)
+            {
+                stop = 1;
+                break;
+            }
+
+            // Receive response message ICMP
+            if (receive_icmp_response(icmp_sockfd, ttl) == 2){
+                stop = 1;
+                break ;
+            }
+            f_packet = 0;
+        }
         
+        if (stop == 1)
+            break;
+        printf("\n");
         ttl++;
         sleep(1);
     }
