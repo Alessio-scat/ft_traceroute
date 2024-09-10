@@ -2,11 +2,10 @@
 
 void print_help()
 {
-	printf("Usage: ping [OPTION...] HOST ...\n"
-	       "Send ICMP ECHO_REQUEST packets to network hosts.\n\n"
+	printf("Usage: traceroute [OPTION...] HOST ...\n"
+	       "Send UDP packets to network hosts.\n\n"
 	       " Options:\n"
-	       "  -h or -?           Show help\n"
-	       "  -v                 Verbose output\n");
+	       "  -h or -?           Show help\n");
         
     exit(EXIT_SUCCESS);
 }
@@ -24,7 +23,7 @@ int is_valid_ipv4(const char *ip)
 
     if (result == 1)
         return 1; // IP valid
-    else    
+    else
         return 0;
 }
 
@@ -46,13 +45,13 @@ int is_valid_hostname(const char *hostname) {
     regfree(&regex);
     
     if (ret == 0)
-        return 1; //Ip valid
+        return 1;
     else
         return 0;
 
 }
 
-void parse_command_line(int ac, char **av, char **destination, int *verbose) {
+void parse_command_line(int ac, char **av, char **destination) {
     int opt;
     int destination_set = 0;
 
@@ -60,16 +59,12 @@ void parse_command_line(int ac, char **av, char **destination, int *verbose) {
         if (av[i][0] == '-') {
             opt = av[i][1];
             switch (opt) {
-                case 'v':
-                    *verbose = 1;
-                    break;
-
                 case 'h':
                     print_help();
                     break;
 
                 default:
-                    fprintf(stderr, ERR_INVALID_TOS, opt);
+                    print_help();
                     exit(EXIT_FAILURE);
             }
         } else if (!destination_set) {
@@ -94,5 +89,4 @@ void parse_command_line(int ac, char **av, char **destination, int *verbose) {
         fprintf(stderr, ERR_INVALID_DESTINATION, *destination);
         exit(EXIT_FAILURE);
     }
-
 }
