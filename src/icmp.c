@@ -62,21 +62,13 @@ int receive_icmp_response(int sockfd, int ttl) {
     unsigned char icmp_type = recv_buffer[ip_header_len];
     unsigned char icmp_code = recv_buffer[ip_header_len + 1];
 
-    if (f_packet == 1)
-        printf("%s ", inet_ntoa(src_addr.sin_addr));
-    printf("%ld ms ", rtt); 
+    resolve_hostame_and_display(&src_addr, rtt);
 
     // unsigned char icmp_type = recv_buffer[20];
     if (icmp_type == 11 && icmp_code == 0)// ICMP "Time Exceeded" continue the loop
-    {  
-        // printf("ICMP Time Exceeded from %s\n", inet_ntoa(src_addr.sin_addr));
         return 0; 
-    } 
     else if (icmp_type == 3 && icmp_code == 3) // ICMP "Port Unreachable"
-    {  
-        // printf("Destination reached from %s\n", inet_ntoa(src_addr.sin_addr));
         return 2;  // stop
-    }
 
     return 0;
 }

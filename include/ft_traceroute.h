@@ -12,6 +12,10 @@
 #include <netinet/ip.h>
 #include <sys/time.h>
 
+// #include <sys/types.h>
+// #include <sys/socket.h>
+#include <netdb.h>
+
 #define ERR_CANNOT_CREATE_SOCKET "Error: Cannot create raw socket: %s\n"
 #define ERR_SOCKET_NOT_PERMITTED "ping: socket: Operation not permitted\n"
 
@@ -32,5 +36,10 @@ int receive_icmp_response(int sockfd, int ttl);
     send_udp.c
 */
 int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl);
+
+/*
+    resolve_hostname.c
+*/
+void resolve_hostame_and_display(struct sockaddr_in *src_addr, long rtt);
 
 #endif

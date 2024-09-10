@@ -12,6 +12,7 @@ SRC			 			= main.c \
 							check_root.c \
 							icmp.c \
 							send_udp.c \
+							resolve_hostname.c \
 
 OBJECTS			    	= $(SRC:%.c=$(BUILD_DIR)%.o)
 	
