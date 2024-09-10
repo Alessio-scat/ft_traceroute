@@ -7,21 +7,31 @@ void handle_interrupt(int sig) {
     running = 0;
 }
 
-int create_raw_socket()
+int create_raw_socket_udp()
 {
-    int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
+    int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);  // Changer pour SOCK_DGRAM (UDP)
     if (sockfd < 0) {
         fprintf(stderr, ERR_CANNOT_CREATE_SOCKET, strerror(errno));
         exit(EXIT_FAILURE);
     }
+    return sockfd;
+}
 
+int create_raw_socket_icmp()
+{
+    int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);  // Socket pour réception des paquets ICMP
+    if (sockfd < 0) {
+        fprintf(stderr, ERR_CANNOT_CREATE_SOCKET, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     return sockfd;
 }
 
 int main ()
 {
     check_root_privileges();
-    int sockfd = create_raw_socket();
+    int udp_sockfd = create_raw_socket_udp();
+    int icmp_sockfd = create_raw_socket_icmp();
     printf("Raw socket (UDP) created successfully\n");
 
     struct sockaddr_in dest_addr;
@@ -36,11 +46,11 @@ int main ()
     while (running)
     {
         // Send UDP packet with ttl actual
-        if (send_udp_packet(sockfd, &dest_addr, ttl) < 0)
+        if (send_udp_packet(udp_sockfd, &dest_addr, ttl) < 0)
             break;
 
         // Receive response message ICMP
-        if (receive_icmp_response(sockfd, ttl) == 1)
+        if (receive_icmp_response(icmp_sockfd, ttl) == 1)
             break ;
         
         ttl++;
@@ -48,6 +58,7 @@ int main ()
     }
 
 
-    close(sockfd);
+    close(udp_sockfd);
+    close(icmp_sockfd);
     return 0;
 }

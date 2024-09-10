@@ -9,6 +9,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <netinet/ip.h>
 
 #define ERR_CANNOT_CREATE_SOCKET "Error: Cannot create raw socket: %s\n"
 #define ERR_SOCKET_NOT_PERMITTED "ping: socket: Operation not permitted\n"

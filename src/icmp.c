@@ -33,14 +33,25 @@ int receive_icmp_response(int sockfd, int ttl) {
     int n = recvfrom(sockfd, recv_buffer, sizeof(recv_buffer), 0, (struct sockaddr*)&src_addr, &addr_len);
     if (n < 0) {
         perror("recvfrom failed");
-        printf("* * *\n");  // display * if nothing response 
+        printf("* * * (TTL: %d)\n", ttl);  // display * if nothing response 
         return -1;
     }
 
     // Display Ip routeur 
     printf("TTL: %d, Received response from %s\n", ttl, inet_ntoa(src_addr.sin_addr));
 
-    unsigned char icmp_type = recv_buffer[20];
+    // Extract IP Header
+    #ifdef __linux__
+        struct iphdr *ip_header = (struct iphdr *)recv_buffer;
+        int ip_header_len = ip_header->ihl * 4;
+    #elif __APPLE__
+        struct ip *ip_header = (struct ip *)recv_buffer;
+        int ip_header_len = ip_header->ip_hl * 4;
+    #endif
+
+    unsigned char icmp_type = recv_buffer[ip_header_len];
+
+    // unsigned char icmp_type = recv_buffer[20];
     if (icmp_type == 11)// ICMP "Time Exceeded" continue the loop
     {  
         printf("ICMP Time Exceeded from %s\n", inet_ntoa(src_addr.sin_addr));
