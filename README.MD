@@ -29,3 +29,7 @@ Step 6 : Gérer les options
 Step 7 : Bonus
     Implémenter des options supplémentaires (-n, -I pour ICMP, ou TCP).
     Gérer des affichages plus détaillés ou des optimisations de performance.
+
+ToDo list : 
+    - Load Balencing
+    - decimal rtt
