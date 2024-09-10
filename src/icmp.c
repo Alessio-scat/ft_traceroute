@@ -62,7 +62,9 @@ int receive_icmp_response(int sockfd, int ttl) {
     unsigned char icmp_type = recv_buffer[ip_header_len];
     unsigned char icmp_code = recv_buffer[ip_header_len + 1];
 
-    resolve_hostame_and_display(&src_addr, rtt);
+    if (f_packet == 1)
+        printf("%s (%s) ", inet_ntoa(src_addr.sin_addr), inet_ntoa(src_addr.sin_addr));
+    printf("%.3f ms ", rtt);
 
     // unsigned char icmp_type = recv_buffer[20];
     if (icmp_type == 11 && icmp_code == 0)// ICMP "Time Exceeded" continue the loop

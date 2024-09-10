@@ -82,6 +82,7 @@ int main (int ac, char **av)
 
         f_packet = 1;
         for (int i = 0; i < 3; i++){
+            
             // Send UDP packet with ttl actual
             if (send_udp_packet(udp_sockfd, &dest_addr, ttl) < 0)
             {
