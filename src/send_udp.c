@@ -22,6 +22,5 @@ int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl, int port
         return -1;
     }
 
-    // printf("Sent UDP packet with TTL = %d\n", ttl);
     return 0;
 }

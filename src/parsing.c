@@ -2,7 +2,7 @@
 
 void print_help()
 {
-	printf("Usage: traceroute [OPTION...] HOST ...\n"
+	printf("Usage: ft_traceroute [OPTION...] HOST ...\n"
 	       "Send UDP packets to network hosts.\n\n"
 	       " Options:\n"
 	       "  -h or -?           Show help\n");

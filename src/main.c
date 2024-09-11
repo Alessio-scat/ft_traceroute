@@ -2,7 +2,7 @@
 
 volatile int running = 1;
 volatile int f_packet = 1;
-int received_count = 0;  // Initialisation dans le fichier source
+int received_count = 0;
 char *received_ips[MAX_RESPONSES_PER_TTL];
 
 void handle_interrupt(int sig) {
@@ -12,7 +12,7 @@ void handle_interrupt(int sig) {
 
 int create_raw_socket_udp()
 {
-    int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);  // Changer pour SOCK_DGRAM (UDP)
+    int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd < 0) {
         fprintf(stderr, ERR_CANNOT_CREATE_SOCKET, strerror(errno));
         exit(EXIT_FAILURE);
@@ -22,7 +22,7 @@ int create_raw_socket_udp()
 
 int create_raw_socket_icmp()
 {
-    int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);  // Socket pour réception des paquets ICMP
+    int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (sockfd < 0) {
         fprintf(stderr, ERR_CANNOT_CREATE_SOCKET, strerror(errno));
         exit(EXIT_FAILURE);
