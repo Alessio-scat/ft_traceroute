@@ -23,16 +23,14 @@ double calculate_time_diff(struct timeval start, struct timeval end) {
     return (seconds * 1000) + (microseconds / 1000.0);
 }
 
-// Fonction pour vérifier si l'IP a déjà été reçue
 int is_ip_received(char *ip) {
     for (int i = 0; i < received_count; i++) {
         if (strcmp(received_ips[i], ip) == 0) {
-            // printf("AAA\n");
-            return 1;  // IP déjà reçue
+            return 1;
         }
     }
     // printf("BBB\n");
-    return 0;  // Nouvelle IP
+    return 0;  // new IP
 }
 
 int receive_icmp_response(int sockfd, int ttl) {
@@ -74,32 +72,23 @@ int receive_icmp_response(int sockfd, int ttl) {
     unsigned char icmp_type = recv_buffer[ip_header_len];
     unsigned char icmp_code = recv_buffer[ip_header_len + 1];
 
-    // Récupérer l'adresse IP source de la réponse ICMP
     char *ip_str = inet_ntoa(src_addr.sin_addr);
-
-    // Vérifier si cette adresse IP a déjà été reçue pour ce TTL
-    if (!is_ip_received(ip_str))
+    if (is_ip_received(ip_str) == 0)
     {
-        // Afficher l'adresse IP et le RTT si elle est nouvelle
         if (f_packet == 1)
-        {
-            printf("%s (%s) ", ip_str, ip_str); // Afficher la première réponse
-            // f_packet = 0;
-        }
+            printf("%s (%s) ", ip_str, ip_str);
         else
-        {
-            printf("\n   %s (%s) ", ip_str, ip_str); // Afficher les autres réponses sur une nouvelle ligne
-        }
+            printf("\n    %s ", ip_str);
 
-        // Stocker cette IP
+        // Stock IP
         if (received_count < MAX_RESPONSES_PER_TTL)
         {
-            received_ips[received_count] = strdup(ip_str); // Copier l'IP
+            received_ips[received_count] = strdup(ip_str);
             received_count++;
         }
     }
 
-    // Afficher le RTT
+    // display RTT
     printf("%.3f ms ", rtt);
     
     // char *ip_str = inet_ntoa(src_addr.sin_addr);

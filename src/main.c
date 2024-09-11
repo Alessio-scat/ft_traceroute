@@ -84,17 +84,20 @@ int main (int ac, char **av)
     int ttl = 1;
     signal(SIGINT, handle_interrupt);
     int stop = 0;
-    int base_port = 33434;
+    int port = 33434;
 
     printf("traceroute to %s (%s), %d hops max, %d byte packets\n", destination, inet_ntoa(dest_addr.sin_addr), MAX_HOPS, LEN_PACKET_IP);
     while (running && ttl <= 64)
     {
-        printf("%d  ", ttl);
+        //alignment
+        if (ttl > 9)
+            printf("%d  ", ttl);
+        else
+            printf(" %d  ", ttl);
 
         f_packet = 1;
         clear_received_ips();
         for (int i = 0; i < 3; i++){
-            int port = base_port + ttl + i; 
             
             // Send UDP packet with ttl actual
             if (send_udp_packet(udp_sockfd, &dest_addr, ttl, port) < 0)
@@ -102,6 +105,8 @@ int main (int ac, char **av)
                 stop = 1;
                 break;
             }
+
+            port++;
 
             // Receive response message ICMP
             if (receive_icmp_response(icmp_sockfd, ttl) == 2){
