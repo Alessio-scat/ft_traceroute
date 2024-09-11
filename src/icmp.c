@@ -23,6 +23,18 @@ double calculate_time_diff(struct timeval start, struct timeval end) {
     return (seconds * 1000) + (microseconds / 1000.0);
 }
 
+// Fonction pour vérifier si l'IP a déjà été reçue
+int is_ip_received(char *ip) {
+    for (int i = 0; i < received_count; i++) {
+        if (strcmp(received_ips[i], ip) == 0) {
+            // printf("AAA\n");
+            return 1;  // IP déjà reçue
+        }
+    }
+    // printf("BBB\n");
+    return 0;  // Nouvelle IP
+}
+
 int receive_icmp_response(int sockfd, int ttl) {
 
     (void)ttl;
@@ -62,9 +74,54 @@ int receive_icmp_response(int sockfd, int ttl) {
     unsigned char icmp_type = recv_buffer[ip_header_len];
     unsigned char icmp_code = recv_buffer[ip_header_len + 1];
 
-    if (f_packet == 1)
-        printf("%s (%s) ", inet_ntoa(src_addr.sin_addr), inet_ntoa(src_addr.sin_addr));
+    // Récupérer l'adresse IP source de la réponse ICMP
+    char *ip_str = inet_ntoa(src_addr.sin_addr);
+
+    // Vérifier si cette adresse IP a déjà été reçue pour ce TTL
+    if (!is_ip_received(ip_str))
+    {
+        // Afficher l'adresse IP et le RTT si elle est nouvelle
+        if (f_packet == 1)
+        {
+            printf("%s (%s) ", ip_str, ip_str); // Afficher la première réponse
+            // f_packet = 0;
+        }
+        else
+        {
+            printf("\n   %s (%s) ", ip_str, ip_str); // Afficher les autres réponses sur une nouvelle ligne
+        }
+
+        // Stocker cette IP
+        if (received_count < MAX_RESPONSES_PER_TTL)
+        {
+            received_ips[received_count] = strdup(ip_str); // Copier l'IP
+            received_count++;
+        }
+    }
+
+    // Afficher le RTT
     printf("%.3f ms ", rtt);
+    
+    // char *ip_str = inet_ntoa(src_addr.sin_addr);
+    // if (!is_ip_received(ip_str)) {
+    //     if (f_packet == 1)
+    //         printf("%s (%s) ", ip_str, ip_str);
+    //     else
+    //         printf("%s ", ip_str);
+
+    //     if (received_count < MAX_RESPONSES_PER_TTL) {
+    //         received_ips[received_count] = strdup(ip_str);  // Copier l'IP
+    //         received_count++;
+    //     }
+
+    //     printf("%.3f ms ", rtt);
+    // }
+    // else
+    //     printf("%.3f ms ", rtt);
+
+    // if (f_packet == 1)
+    //     printf("%s (%s) ", inet_ntoa(src_addr.sin_addr), inet_ntoa(src_addr.sin_addr));
+    // printf("%.3f ms ", rtt);
 
     // unsigned char icmp_type = recv_buffer[20];
     if (icmp_type == 11 && icmp_code == 0)// ICMP "Time Exceeded" continue the loop
@@ -72,5 +129,6 @@ int receive_icmp_response(int sockfd, int ttl) {
     else if (icmp_type == 3 && icmp_code == 3) // ICMP "Port Unreachable"
         return 2;  // stop
 
+    printf("EHOH\n");
     return 0;
 }

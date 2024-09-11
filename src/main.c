@@ -2,6 +2,8 @@
 
 volatile int running = 1;
 volatile int f_packet = 1;
+int received_count = 0;  // Initialisation dans le fichier source
+char *received_ips[MAX_RESPONSES_PER_TTL];
 
 void handle_interrupt(int sig) {
     (void)sig;
@@ -53,6 +55,14 @@ void config_destination(char *destination, struct sockaddr_in *dest_addr)
     freeaddrinfo(res);
 }
 
+void clear_received_ips() {
+    for (int i = 0; i < received_count; i++) {
+        if (received_ips[i])
+            free(received_ips[i]);
+    }
+    received_count = 0;
+}
+
 /*
     LEN_PACKET_IP 40 :
         - IP header: 20 bytes.
@@ -74,6 +84,7 @@ int main (int ac, char **av)
     int ttl = 1;
     signal(SIGINT, handle_interrupt);
     int stop = 0;
+    int base_port = 33434;
 
     printf("traceroute to %s (%s), %d hops max, %d byte packets\n", destination, inet_ntoa(dest_addr.sin_addr), MAX_HOPS, LEN_PACKET_IP);
     while (running && ttl <= 64)
@@ -81,10 +92,12 @@ int main (int ac, char **av)
         printf("%d  ", ttl);
 
         f_packet = 1;
+        clear_received_ips();
         for (int i = 0; i < 3; i++){
+            int port = base_port + ttl + i; 
             
             // Send UDP packet with ttl actual
-            if (send_udp_packet(udp_sockfd, &dest_addr, ttl) < 0)
+            if (send_udp_packet(udp_sockfd, &dest_addr, ttl, port) < 0)
             {
                 stop = 1;
                 break;

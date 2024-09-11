@@ -14,6 +14,11 @@
 #include <regex.h>
 #include <netdb.h>
 
+#define MAX_RESPONSES_PER_TTL 10
+
+extern int received_count;
+extern char *received_ips[MAX_RESPONSES_PER_TTL];
+
 #define MAX_HOPS 64
 #define LEN_PACKET_IP 40
 #define ERR_CANNOT_CREATE_SOCKET "Error: Cannot create raw socket: %s\n"
@@ -40,7 +45,7 @@ int receive_icmp_response(int sockfd, int ttl);
 /*
     send_udp.c
 */
-int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl);
+int send_udp_packet(int sockfd, struct sockaddr_in *dest_addr, int ttl, int port);
 
 /*
     parsing.c
