@@ -116,8 +116,10 @@ int main (int ac, char **av)
             f_packet = 0;
         }
         
-        if (stop == 1)
+        if (stop == 1){
+            printf("\n");
             break;
+        }
         printf("\n");
         ttl++;
         sleep(1);

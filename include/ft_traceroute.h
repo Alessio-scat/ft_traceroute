@@ -13,6 +13,7 @@
 #include <sys/time.h>
 #include <regex.h>
 #include <netdb.h>
+#include <signal.h>
 
 #define MAX_RESPONSES_PER_TTL 10
 
