@@ -37,8 +37,10 @@ void load_balencing(struct sockaddr_in src_addr, double rtt){
     {
         if (f_packet == 1)
             printf("%s (%s) ", ip_str, ip_str);
-        else
+        else{
+            printf(" %s ", ip_str);
             printf("\n    %s ", ip_str);
+        }
 
         // Stock IP
         if (received_count < MAX_RESPONSES_PER_TTL)
